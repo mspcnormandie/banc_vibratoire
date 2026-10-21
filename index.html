@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MISSION MBP011 — LE DÉFI DES TECHNICIENS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #0b1329;
+      color: #f8fafc;
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    button, .btn-option, .btn-level, .image-card img, a {
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Boutons de contrôle système en haut à droite */
+    #btn-fullscreen {
+      position: fixed;
+      top: 10px;
+      right: 98px;
+      z-index: 4000;
+      background: #1e293b;
+      color: #f8fafc;
+      border: 2px solid #38bdf8;
+      border-radius: 8px;
+      padding: 8px 13px;
+      font-size: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      touch-action: manipulation;
+    }
+    #btn-fullscreen:hover { background: #334155; }
+
+    #btn-audio-mute {
+      position: fixed;
+      top: 10px;
+      right: 14px;
+      z-index: 4000;
+      background: #1e293b;
+      color: #f8fafc;
+      border: 2px solid #38bdf8;
+      border-radius: 8px;
+      padding: 8px 13px;
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      touch-action: manipulation;
+    }
+    #btn-audio-mute:hover { background: #334155; }
+    #btn-audio-mute.muted { background: rgba(239, 68, 68, 0.25); border-color: #ef4444; color: #ef4444; }
+
+    /* Écran 1 : Présentation */
+    #start-screen-1 {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 1000;
+      background-color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .presentation-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .presentation-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+
+    .btn-enter-wrapper {
+      position: absolute;
+      bottom: clamp(55px, 12vh, 90px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1050;
+    }
+
+    .btn-enter {
+      background: #0284c7;
+      color: #ffffff;
+      padding: clamp(16px, 3vh, 22px) clamp(36px, 6vw, 54px);
+      border: 3px solid #38bdf8;
+      border-radius: 14px;
+      font-size: clamp(26px, 3.2vw, 36px);
+      font-weight: 900;
+      box-shadow: 0 8px 26px rgba(0,0,0,0.85);
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+      animation: pulseBtn 2s infinite ease-in-out;
+    }
+    .btn-enter:active { background: #0369a1; transform: scale(0.96); }
+
+    @keyframes pulseBtn {
+      0%, 100% { box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6); }
+      50% { box-shadow: 0 6px 30px rgba(56, 189, 248, 0.95); transform: scale(1.02); }
+    }
+
+    /* Écran 2 : Menu de sélection */
+    #start-screen-2 {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 900;
+      background: #0f172a;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .mission-container {
+      background: #ffffff;
+      color: #1e293b;
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      height: 90dvh;
+      max-height: 520px;
+      border-radius: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      border: 2px solid #334155;
+    }
+
+    .mission-left-img {
+      position: relative;
+      background: #0f172a;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mission-left-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .mission-img-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 85%;
+      overflow-y: auto;
+      padding: 12px 14px;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.96) 80%, rgba(15, 23, 42, 0.7) 95%, transparent);
+      color: #f8fafc;
+    }
+
+    .mission-img-overlay h3 {
+      font-size: 14px;
+      color: #facc15;
+      margin-bottom: 6px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .mission-img-overlay p {
+      font-size: 11px;
+      line-height: 1.35;
+      opacity: 0.95;
+    }
+
+    .mission-right-content {
+      padding: clamp(8px, 1.8vh, 16px) clamp(12px, 2vw, 20px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+    }
+    .mission-right-content h2 { font-size: clamp(14px, 1.4vw, 17px); color: #0f172a; margin-bottom: 2px; font-weight: 900; }
+    .mission-right-content > p { font-size: clamp(10.5px, 1.1vw, 12px); color: #475569; line-height: 1.25; margin-bottom: 4px; }
+
+    .mission-levels {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(4px, 1vh, 6px);
+      margin-bottom: 4px;
+    }
+
+    .btn-level {
+      background: #f8fafc;
+      color: #0f172a;
+      padding: clamp(5px, 1.2vh, 8px) 10px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      text-align: left;
+      font-size: clamp(11px, 1.1vw, 12.5px);
+      font-weight: 700;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .btn-level:active { transform: scale(0.98); }
+    .btn-level.selected {
+      background: #e0f2fe !important;
+      color: #0369a1 !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 1px #0284c7;
+    }
+    .btn-level.locked {
+      background: #f1f5f9;
+      color: #94a3b8;
+      border-color: #e2e8f0;
+      cursor: not-allowed;
+      opacity: 0.75;
+    }
+    .level-stars-badge { color: #eab308; font-size: 11px; letter-spacing: 2px; }
+
+    .menu-aux-buttons { display: grid; grid-template-columns: 1fr; gap: 4px; margin: 2px 0; }
+    .btn-aux {
+      background: #f8fafc;
+      color: #0284c7;
+      border: 2px solid #0284c7;
+      border-radius: 8px;
+      padding: clamp(5px, 1vh, 7px) 10px;
+      font-size: clamp(10.5px, 1vw, 12px);
+      font-weight: 700;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-mission-start {
+      background: #0284c7;
+      color: white;
+      padding: clamp(8px, 1.5vh, 11px);
+      border-radius: 8px;
+      border: none;
+      font-weight: 900;
+      font-size: clamp(12.5px, 1.2vw, 14px);
+      text-transform: uppercase;
+      text-align: center;
+      width: 100%;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+    }
+
+    .mission-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin: 2px 0;
+    }
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 3px 2px;
+      text-align: center;
+    }
+    .stat-box span { display: block; font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+    .stat-box strong { font-size: 11px; color: #0f172a; }
+
+    .btn-reset-progression {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 2px 0;
+    }
+
+    #toast-notification {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #0284c7;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      z-index: 6000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    #toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* HEADER */
+    header {
+      background: #0f172a;
+      padding: 10px 200px 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #1e293b;
+      height: 68px;
+      flex-shrink: 0;
+    }
+    .header-title { display: flex; flex-direction: column; min-width: 190px; }
+    .header-title-top { display: flex; align-items: center; gap: 8px; }
+    .header-title h1 { font-size: 18px; font-weight: 900; color: #f8fafc; letter-spacing: 0.5px; white-space: nowrap; }
+    .version-badge { background: #334155; color: #38bdf8; font-size: 10.5px; font-weight: bold; padding: 2px 6px; border-radius: 4px; border: 1px solid #475569; }
+    .header-title span { font-size: 12px; color: #94a3b8; font-weight: 600; text-transform: uppercase; white-space: nowrap; margin-top: 1px; }
+
+    .header-center { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; max-width: 320px; margin: 0 14px; }
+    .header-step-timer { display: flex; justify-content: space-between; width: 100%; font-size: 15px; font-weight: bold; color: #f8fafc; }
+    .progress-container { width: 100%; height: 8px; background: #334155; border-radius: 4px; overflow: hidden; position: relative; }
+    .progress-bar { height: 100%; width: 100%; background: #22c55e; transform-origin: left center; transform: scaleX(1); will-change: transform; transition: transform 0.3s linear; }
+
+    .timer-danger { animation: timerDangerPulse 0.6s infinite alternate; }
+    @keyframes timerDangerPulse { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+
+    .header-right { display: flex; align-items: center; gap: 10px; font-weight: bold; }
+    .hud-lives-container { display: flex; align-items: center; gap: 6px; }
+    .hud-lives { color: #f8fafc; font-weight: bold; font-size: 15.5px; white-space: nowrap; }
+    .hud-combo-badge { background: #e0f2fe; color: #0284c7; border: 1px solid #38bdf8; font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 900; display: none; }
+    .hud-score { background: #1e293b; padding: 5px 12px; border-radius: 8px; color: #fbbf24; border: 1px solid #334155; font-size: 15.5px; white-space: nowrap; }
+
+    /* ZONE PRINCIPALE */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 16px;
+      padding: 12px 16px;
+      height: calc(100vh - 68px);
+      height: calc(100dvh - 68px);
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .image-card {
+      background: #151f32;
+      border-radius: 14px;
+      position: relative;
+      border: 2px solid #283548;
+      padding: 46px 12px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+      height: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .image-card img {
+      width: 100%;
+      max-height: calc(100% - 130px);
+      object-fit: contain;
+      border-radius: 10px;
+      flex-shrink: 1;
+      margin-top: 14px;
+    }
+    #current-level-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      color: #fbbf24;
+      font-weight: 800;
+      border: 1px solid #334155;
+      z-index: 5;
+      backdrop-filter: blur(4px);
+    }
+
+    .click-marker { position: absolute; width: 26px; height: 26px; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 20; }
+    .target-highlight { position: absolute; border: 3px dashed #22c55e; background-color: rgba(34, 197, 94, 0.35); border-radius: 8px; pointer-events: none; z-index: 25; }
+
+    /* PANNEAU DE QUESTIONS & OPTIONS */
+    .quiz-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+      overflow: hidden;
+      justify-content: flex-start;
+    }
+
+    .question-card {
+      background: #1e293b;
+      padding: 16px 20px;
+      border-left: 6px solid #38bdf8;
+      font-size: 19px;
+      font-weight: 700;
+      color: #f8fafc;
+      line-height: 1.4;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      border-radius: 12px;
+    }
+    .multi-hint { display: block; font-size: 13px; font-weight: 600; color: #38bdf8; margin-top: 4px; }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: initial;
+      justify-content: flex-start;
+    }
+
+    .btn-option {
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 14px 18px;
+      border: 2px solid #334155;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: left;
+      line-height: 1.3;
+      min-height: 56px;
+      transition: all 0.12s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .btn-option:hover {
+      border-color: #38bdf8;
+      background: #24344d;
+    }
+    .btn-option .prefix {
+      background: #0f172a;
+      color: #38bdf8;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      flex-shrink: 0;
+      border: 1px solid #334155;
+    }
+    .btn-option.selected { background: #0369a1 !important; border-color: #38bdf8 !important; }
+    .btn-option.correct { background: #15803d !important; border-color: #22c55e !important; color: white !important; }
+    .btn-option.incorrect { background: #b91c1c !important; border-color: #ef4444 !important; color: white !important; }
+
+    .btn-next {
+      background: #16a34a;
+      color: white;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 900;
+      display: none;
+      width: 100%;
+      text-transform: uppercase;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 18px;
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.4);
+      transition: transform 0.1s ease;
+    }
+    .btn-next:active { transform: scale(0.98); }
+
+    .explanation-card {
+      position: relative;
+      width: 100%;
+      margin-top: 20px;
+      background: rgba(15, 23, 42, 0.96);
+      padding: 14px 18px;
+      border-radius: 12px;
+      display: none;
+      font-size: 18px;
+      color: #f8fafc;
+      border: 2px solid #38bdf8;
+      z-index: 10;
+      line-height: 1.45;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      flex-shrink: 0;
+    }
+
+    /* MODALES */
+    .overlay-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      text-align: center;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+    }
+    .end-content {
+      background: rgba(15, 23, 42, 0.95);
+      padding: 18px 24px;
+      border-radius: 16px;
+      border: 2px solid #38bdf8;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .stars-display { font-size: 28px; letter-spacing: 5px; color: #facc15; text-shadow: 0 0 14px rgba(250, 204, 21, 0.7); }
+    .stars-rank-title { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+
+    .btn-errors-view {
+      background: #0284c7;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1.5px solid #38bdf8;
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      text-align: center;
+      width: 100%;
+    }
+
+    #rules-modal, #errors-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.94);
+    }
+    .modal-box {
+      background: #1e293b;
+      color: #f8fafc;
+      width: 100%;
+      max-width: 620px;
+      border-radius: 14px;
+      border: 2px solid #38bdf8;
+      display: flex;
+      flex-direction: column;
+      max-height: 90vh;
+      max-height: 90dvh;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.85);
+    }
+    .modal-header { padding: 10px 16px; background: #0f172a; border-bottom: 2px solid #334155; display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h2 { font-size: 14.5px; color: #38bdf8; font-weight: 800; }
+    .modal-body { padding: 12px 16px; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .modal-footer { padding: 10px 16px; background: #0f172a; border-top: 2px solid #334155; display: flex; justify-content: flex-end; }
+
+    .error-item {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-left: 4px solid #ef4444;
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+    .error-item img { width: 80px; height: 60px; object-fit: contain; background: #1e293b; border-radius: 6px; }
+    .error-item-content h4 { font-size: 12.5px; color: #f8fafc; margin-bottom: 2px; font-weight: bold; }
+    .error-item-content p { font-size: 11.5px; color: #cbd5e1; line-height: 1.3; }
+    .error-item-content p strong { color: #facc15; }
+
+    .iso-badge { background: #0284c7; color: #ffffff; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 3px; letter-spacing: 0.5px; }
+
+    /* Secousse du score */
+    @keyframes shakeScore {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      20% { transform: scale(1.25) rotate(-6deg); color: #facc15; }
+      40% { transform: scale(1.25) rotate(6deg); color: #facc15; }
+      60% { transform: scale(1.15) rotate(-3deg); }
+      80% { transform: scale(1.05) rotate(3deg); }
+    }
+
+    .score-bump {
+      animation: shakeScore 0.5s ease-out;
+      border-color: #facc15 !important;
+    }
+
+    @keyframes shakeLivesLoss {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      20% { transform: scale(1.25) rotate(-6deg); }
+      40% { transform: scale(1.25) rotate(6deg); }
+      60% { transform: scale(1.15) rotate(-3deg); }
+      80% { transform: scale(1.05) rotate(3deg); }
+    }
+
+    .lives-loss-bump {
+      animation: shakeLivesLoss 0.5s ease-out;
+    }
+
+    /* RESPONSIVE */
+    @media (min-width: 768px) and (min-height: 500px) {
+      header {
+        height: 74px;
+        padding: 12px 210px 12px 24px;
+      }
+      .header-title h1 { font-size: 20px; }
+      .header-title span { font-size: 13px; }
+      .version-badge { font-size: 11.5px; padding: 2px 7px; }
+      .header-center { max-width: 360px; }
+      .header-step-timer { font-size: 16.5px; }
+      .progress-container { height: 9px; }
+      .hud-lives, .hud-score { font-size: 17px; }
+      .hud-score { padding: 6px 14px; }
+
+      main {
+        padding: 16px 24px;
+        gap: 20px;
+        height: calc(100dvh - 74px);
+      }
+
+      .image-card {
+        padding-top: 54px;
+      }
+
+      .image-card img {
+        margin-top: 18px;
+      }
+
+      #current-level-badge {
+        font-size: 15px;
+        padding: 6px 14px;
+        top: 12px;
+        left: 12px;
+      }
+
+      .question-card {
+        padding: 22px 24px;
+        font-size: 23px;
+        border-radius: 14px;
+      }
+
+      .options-grid {
+        gap: 18px;
+      }
+
+      .options-grid:has(.btn-option:nth-child(2):last-child) .btn-option {
+        min-height: 72px;
+        font-size: 20px;
+      }
+
+      .btn-option {
+        min-height: 60px;
+        font-size: 18px;
+        padding: 14px 20px;
+        border-radius: 14px;
+      }
+
+      .btn-option .prefix {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+      }
+
+      .btn-next {
+        padding: 16px 20px;
+        font-size: 17px;
+        margin-top: 24px;
+      }
+
+      .explanation-card {
+        font-size: 20px;
+        padding: 16px 20px;
+        margin-top: 24px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      header {
+        height: 78px;
+      }
+      .header-title h1 { font-size: 22px; }
+      .header-title span { font-size: 14px; }
+      .header-step-timer { font-size: 18px; }
+      .hud-lives, .hud-score { font-size: 18px; }
+      main {
+        height: calc(100dvh - 78px);
+      }
+      #current-level-badge { font-size: 16px; padding: 7px 16px; }
+      .question-card { font-size: 25px; padding: 26px; }
+      .btn-option { font-size: 20px; min-height: 64px; }
+      .explanation-card { font-size: 22px; padding: 18px 24px; margin-top: 28px; }
+      .options-grid { gap: 20px; }
+      .btn-next { margin-top: 28px; }
+    }
+
+    @media (max-height: 460px) and (orientation: landscape) {
+      .btn-enter-wrapper {
+        bottom: 35px !important;
+      }
+      .btn-enter {
+        font-size: 22px !important;
+        padding: 10px 24px !important;
+      }
+
+      header {
+        height: 46px !important;
+        padding: 0 88px 0 10px !important;
+      }
+
+      .header-title { min-width: auto !important; }
+      .header-title h1 { font-size: 15px !important; }
+      .header-title span { display: none !important; }
+      .version-badge { display: none !important; }
+
+      #mute-text { display: none !important; }
+      #btn-fullscreen {
+        top: 6px !important;
+        right: 48px !important;
+        padding: 5px 8px !important;
+        font-size: 13px !important;
+      }
+      #btn-audio-mute {
+        top: 6px !important;
+        right: 8px !important;
+        padding: 5px 8px !important;
+        font-size: 13px !important;
+      }
+
+      .header-center { margin: 0 8px !important; max-width: 200px !important; }
+      .header-step-timer { font-size: 12.5px !important; }
+      .progress-container { height: 5px !important; }
+
+      .hud-lives, .hud-score { font-size: 13px !important; }
+      .hud-score { padding: 3px 6px !important; }
+
+      main {
+        height: calc(100dvh - 46px) !important;
+        padding: 6px 10px !important;
+        gap: 10px !important;
+      }
+
+      .image-card {
+        padding: 28px 6px 6px 6px !important;
+      }
+      .image-card img {
+        margin-top: 4px !important;
+        max-height: calc(100% - 95px) !important;
+      }
+      #current-level-badge {
+        font-size: 10.5px !important;
+        padding: 2px 7px !important;
+        top: 4px !important;
+        left: 4px !important;
+      }
+
+      .question-card {
+        padding: 8px 12px !important;
+        font-size: 15px !important;
+      }
+      .options-grid { gap: 6px !important; }
+      .btn-option {
+        min-height: 36px !important;
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+      }
+      .btn-option .prefix { width: 22px !important; height: 22px !important; font-size: 11px !important; }
+      .btn-next { padding: 8px 12px !important; font-size: 13px !important; margin-top: 6px !important; }
+      .explanation-card { font-size: 13.5px !important; padding: 8px 10px !important; margin-top: 6px !important; }
+    }
+
+    @media (max-width: 600px) and (orientation: portrait) {
+      body { overflow-y: auto !important; }
+      main { grid-template-columns: 1fr !important; height: auto !important; overflow-y: auto !important; }
+      .image-card { height: auto !important; min-height: 240px !important; padding-top: 40px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast-notification">Notification</div>
+
+<button id="btn-fullscreen" title="Plein écran">⛶</button>
+<button id="btn-audio-mute" title="Activer / Couper le son">
+  <span id="mute-icon">🔊</span> <span id="mute-text">SON</span>
+</button>
+
+<!-- Écran 1 : Image de garde / Affiche Escape Game -->
+<div id="start-screen-1">
+  <div class="presentation-container">
+    <img src="images/presentation.webp" alt="Présentation Mission MBP011">
+    <div class="btn-enter-wrapper">
+      <button class="btn-enter" id="btn-enter-action">Toucher pour entrer ➔</button>
+    </div>
+  </div>
+</div>
+
+<!-- Écran 2 : Menu d'accueil & sélection de niveau -->
+<div id="start-screen-2">
+  <div class="mission-container">
+    <div class="mission-left-img">
+      <img src="images/intro.webp" alt="Introduction MBP011">
+      <div class="mission-img-overlay">
+        <h3>Votre mission</h3>
+        <p>
+          Vous êtes une équipe de techniciens de maintenance de l'entreprise <strong>Techni_plus</strong>, spécialisée dans la maintenance industrielle, notamment dans le secteur nucléaire.<br><br>
+          Une anomalie a été signalée sur un groupe motopompe <strong>MBP011</strong>. Avant de participer à sa surveillance, votre responsable souhaite vérifier vos connaissances.<br><br>
+          Pour réussir votre mission, vous devrez franchir <strong>trois niveaux</strong> de difficulté et répondre à <strong>30 questions</strong>.<br><br>
+          <em>Règle du jeu : une seule bonne réponse par question. Chaque niveau comporte 10 questions.</em>
+        </p>
+      </div>
+    </div>
+    <div class="mission-right-content">
+      <div>
+        <h2>MISSION MBP011 — LE DÉFI DES TECHNICIENS</h2>
+        <p>Sélectionne ton niveau d'intervention :</p>
+        <div class="mission-levels">
+          <button class="btn-level selected" onclick="selectLevel(1)" id="lvl-btn-1">
+            <span class="lvl-label">🟢 Niveau 1 : Débutant</span>
+            <span class="level-stars-badge" id="lvl-stars-1"></span>
+          </button>
+          <button class="btn-level locked" onclick="selectLevel(2)" id="lvl-btn-2">
+            <span class="lvl-label">🔒 Niveau 2 : Intermédiaire</span>
+            <span class="level-stars-badge" id="lvl-stars-2"></span>
+          </button>
+          <button class="btn-level locked" onclick="selectLevel(3)" id="lvl-btn-3">
+            <span class="lvl-label">🔒 Niveau 3 : Professionnel</span>
+            <span class="level-stars-badge" id="lvl-stars-3"></span>
+          </button>
+        </div>
+        <div class="menu-aux-buttons">
+          <button class="btn-aux" onclick="openRulesModal()">📖 Règles du Jeu & Consignes MBP011</button>
+        </div>
+      </div>
+      <button class="btn-mission-start" onclick="startGame()">Démarrer la mission ➔</button>
+      <div class="mission-stats">
+        <div class="stat-box"><span>Questions</span><strong>10 / niv</strong></div>
+        <div class="stat-box"><span>Vies</span><strong>3 ❤️</strong></div>
+        <div class="stat-box"><span>Validation</span><strong>80%</strong></div>
+      </div>
+      <button class="btn-reset-progression" onclick="resetProgress()"><span>Réinitialiser la progression</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Modale des règles -->
+<div id="rules-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>📖 Règles & Fonctionnement de la Mission MBP011</h2>
+      <button onclick="closeRulesModal()" style="background:transparent; border:none; color:#94a3b8; font-size:20px; font-weight:bold; cursor:pointer; padding:0 6px;">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:#f8fafc; line-height:1.35;">
+        🎯 <strong>Mission :</strong> Analyser le groupe motopompe MBP011, identifier les composants, respecter la sécurité et exploiter la surveillance vibratoire.
+      </p>
+      <div style="background:#0f172a; padding:10px; border-radius:8px; border:1px solid #334155; display:flex; flex-direction:column; gap:6px; font-size:12px; line-height:1.4;">
+        <p>⏱️ <strong>Chronomètre :</strong> Vous disposez d'un temps limité par situation pour répondre.</p>
+        <p>❤️ <strong>Gestion des vies :</strong> Vous commencez avec <strong>3 cœurs</strong>. Chaque erreur retire 1 vie.</p>
+        <p>🔥 <strong>Combo Récupération :</strong> Enchaînez <strong>2 bonnes réponses consécutives</strong> pour regagner <strong>+1 vie</strong> (max 3 cœurs).</p>
+        <p>🏆 <strong>Validation du niveau :</strong> Obtenez au moins <strong>8 bonnes réponses sur 10 (80 %)</strong> pour valider l'étape et débloquer le niveau suivant.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-mission-start" style="width:auto; padding:8px 20px; font-size:12.5px;" onclick="closeRulesModal()">Compris ! ➔</button>
+    </div>
+  </div>
+</div>
+
+<!-- Écran de victoire -->
+<div id="win-screen" class="overlay-screen" style="background-image: url('images/ok.webp');">
+  <div class="end-content">
+    <h1 style="color: #22c55e; font-size: 18px; font-weight: 900;">🎉 MISSION VALIDÉE AVEC SUCCÈS</h1>
+    <div class="stars-display" id="win-stars-icons">⭐⭐⭐</div>
+    <div class="stars-rank-title" id="win-rank-title" style="color: #facc15;">Expert</div>
+    <div id="win-score-text" style="font-size: 15px; font-weight: bold; color: #f8fafc;">100 / 100 pts</div>
+    <div id="win-unlock-text" style="font-size: 12px; color: #38bdf8; font-weight: bold; display: none;">🔓 Niveau supérieur débloqué !</div>
+    <button class="btn-errors-view" id="btn-win-errors" onclick="openErrorsModal()">📋 Voir le récapitulatif des erreurs</button>
+    <button class="btn-mission-start" onclick="location.reload()">Continuer / Menu ➔</button>
+  </div>
+</div>
+
+<!-- Écran de défaite -->
+<div id="lose-screen" class="overlay-screen" style="background-image: url('images/not_ok.webp');">
+  <div class="end-content">
+    <h1 style="color: #ef4444; font-size: 18px; font-weight: 900;">⚠️ OBJECTIF NON ATTEINT</h1>
+    <div class="stars-display" style="color: #64748b; text-shadow:none;">☆☆☆</div>
+    <div id="lose-score-text" style="font-size: 14px; font-weight: bold; color: #f8fafc;">Score insuffisant</div>
+    <button class="btn-errors-view" id="btn-lose-errors" onclick="openErrorsModal()">📋 Voir mes erreurs & explications</button>
+    <button class="btn-mission-start" style="background:#ef4444;" onclick="location.reload()">Réessayer la mission ➔</button>
+  </div>
+</div>
+
+<!-- Modale des erreurs -->
+<div id="errors-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>📋 Bilan & Explications techniques</h2>
+      <span style="font-size: 11.5px; color: #94a3b8; font-weight: bold;" id="errors-count-badge">0 erreur</span>
+    </div>
+    <div class="modal-body" id="errors-list-container"></div>
+    <div class="modal-footer">
+      <button class="btn-mission-start" style="width: auto; padding: 7px 18px; font-size: 12px;" onclick="closeErrorsModal()">Fermer ✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- En-tête HUD en jeu -->
+<header>
+  <div class="header-title">
+    <div class="header-title-top">
+      <h1>MISSION MBP011</h1>
+      <span class="version-badge">v1.7.0</span>
+    </div>
+    <span>Le Défi des Techniciens – Surveillance vibratoire</span>
+  </div>
+  <div class="header-center">
+    <div class="header-step-timer">
+      <span id="txt-step">Question : 1 / 10</span>
+      <span id="txt-timer">⏱️ 20s</span>
+    </div>
+    <div class="progress-container"><div class="progress-bar" id="bar-progression"></div></div>
+  </div>
+  <div class="header-right">
+    <div class="hud-lives-container" id="hud-lives-container">
+      <div class="hud-lives" id="txt-lives">Vies : ❤️❤️❤️</div>
+      <span class="hud-combo-badge" id="hud-combo-badge">🔥 1/2</span>
+    </div>
+    <div class="hud-score" id="txt-score">🏆 0 pts</div>
+  </div>
+</header>
+
+<!-- Zone interactive de jeu -->
+<main>
+  <div class="image-card" id="image-card-container">
+    <div id="current-level-badge">Niveau 1 : Débutant</div>
+    <img id="img-situation" src="" alt="Situation MBP011" onerror="this.src='images/intro.webp';">
+    <div class="explanation-card" id="explanation-box"><span id="explanation-text"></span></div>
+  </div>
+  <div class="quiz-panel">
+    <div class="question-card" id="question-text">Chargement...</div>
+    <div class="options-grid" id="options-container"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">CONTINUER ➔</button>
+  </div>
+</main>
+
+<script>
+  function requestUniversalFullscreen() {
+    const docEl = document.documentElement;
+    if (docEl.requestFullscreen) {
+      docEl.requestFullscreen().catch(() => {});
+    } else if (docEl.webkitRequestFullscreen) {
+      docEl.webkitRequestFullscreen();
+    } else if (docEl.msRequestFullscreen) {
+      docEl.msRequestFullscreen();
+    }
+  }
+
+  const btnEnter = document.getElementById('btn-enter-action');
+  if (btnEnter) {
+    btnEnter.addEventListener('click', () => {
+      requestUniversalFullscreen();
+      document.getElementById('start-screen-1').style.display = 'none';
+      document.getElementById('start-screen-2').style.display = 'flex';
+    });
+  }
+
+  const btnFs = document.getElementById('btn-fullscreen');
+  if (btnFs) {
+    btnFs.addEventListener('click', () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        requestUniversalFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    });
+  }
+</script>
+<script src="data.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>
